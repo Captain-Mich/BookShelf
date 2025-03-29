@@ -15,8 +15,12 @@ type ReadingScreenProps = NativeStackScreenProps<RootStackParamList, 'Reading'>;
 const ReadingScreen = ({ route, navigation }: ReadingScreenProps) => {
   const { bookColor } = route.params;
   
-  const handleBack = () => {
-    navigation.goBack();
+  const handleNavigateToHome = () => {
+    navigation.navigate('Home');
+  };
+
+  const handleNavigateToQuotes = () => {
+    navigation.navigate('Quotes');
   };
 
   return (
@@ -28,7 +32,7 @@ const ReadingScreen = ({ route, navigation }: ReadingScreenProps) => {
       
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.headerButton} onPress={handleBack}>
+        <TouchableOpacity style={styles.headerButton} onPress={handleNavigateToHome}>
           <PlusIcon />
         </TouchableOpacity>
         <Text style={styles.readingTitle}>CURRENTLY READING</Text>
@@ -65,7 +69,8 @@ const ReadingScreen = ({ route, navigation }: ReadingScreenProps) => {
       {/* Bottom Navigation */}
       <BottomNavigation 
         active="reading" 
-        onPressBookshelf={handleBack}
+        onPressBookshelf={handleNavigateToHome}
+        onPressBookmarks={handleNavigateToQuotes}
       />
     </SafeAreaView>
   );
@@ -101,6 +106,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     alignItems: 'center',
     paddingVertical: 10,
+    marginBottom: 60, // Add bottom margin for the navigation bar
   },
   bookIllustrationContainer: {
     height: 240,

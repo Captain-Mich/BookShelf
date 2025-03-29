@@ -17,33 +17,36 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
 }) => {
   return (
     <View style={styles.bottomNav}>
+      {/* Bookshelf Icon (Home) */}
       <TouchableOpacity 
         style={styles.navButton} 
         activeOpacity={0.7}
         onPress={onPressBookshelf}
       >
         <View style={[styles.navIconContainer, active === 'bookshelf' && styles.activeIcon]}>
-          <BookshelfIcon />
+          <BookshelfIcon color={active === 'bookshelf' ? '#5D4037' : '#A1887F'} />
         </View>
       </TouchableOpacity>
       
-      <TouchableOpacity 
-        style={styles.navButton}
-        activeOpacity={0.7}
-        onPress={onPressReading}
-      >
-        <View style={[styles.navIconContainer, active === 'reading' && styles.activeIcon]}>
-          <OpenBookIcon />
-        </View>
-      </TouchableOpacity>
-      
+      {/* Quotes Icon (Center) */}
       <TouchableOpacity 
         style={styles.navButton}
         activeOpacity={0.7}
         onPress={onPressBookmarks}
       >
         <View style={[styles.navIconContainer, active === 'bookmarks' && styles.activeIcon]}>
-          <BookmarkIcon />
+          <BookmarkIcon color={active === 'bookmarks' ? '#5D4037' : '#A1887F'} />
+        </View>
+      </TouchableOpacity>
+      
+      {/* Reading Icon (Last) */}
+      <TouchableOpacity 
+        style={styles.navButton}
+        activeOpacity={0.7}
+        onPress={onPressReading}
+      >
+        <View style={[styles.navIconContainer, active === 'reading' && styles.activeIcon]}>
+          <OpenBookIcon color={active === 'reading' ? '#5D4037' : '#A1887F'} />
         </View>
       </TouchableOpacity>
     </View>
@@ -58,6 +61,11 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderTopWidth: 1,
     borderTopColor: '#E0D5C1',
+    height: 60,
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
   navButton: {
     flex: 1,

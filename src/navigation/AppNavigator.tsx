@@ -4,11 +4,15 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { BOOK_COLORS } from '../utils/colors';
 import HomeScreen from '../screens/HomeScreen';
 import ReadingScreen from '../screens/ReadingScreen';
+import QuotesScreen from '../screens/QuotesScreen';
+import BookDetailScreen from '../screens/BookDetailScreen';
 
 // Define the stack navigator param list types
 export type RootStackParamList = {
   Home: undefined;
   Reading: { bookColor: string };
+  Quotes: undefined;
+  BookDetail: { bookColor: string };
 };
 
 // Create the stack navigator
@@ -33,6 +37,16 @@ const AppNavigator = () => {
           name="Reading" 
           options={{ headerShown: false }}
           component={ReadingScreen} 
+        />
+        <Stack.Screen 
+          name="Quotes" 
+          options={{ headerShown: false }}
+          component={QuotesScreen} 
+        />
+        <Stack.Screen 
+          name="BookDetail" 
+          options={{ headerShown: false }}
+          component={BookDetailScreen} 
         />
       </Stack.Navigator>
     </NavigationContainer>

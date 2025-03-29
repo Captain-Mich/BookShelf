@@ -31,8 +31,9 @@ const Bookshelf: React.FC<BookshelfProps> = ({ bookColors, onPressBook }) => {
 
 const styles = StyleSheet.create({
   shelfContainer: {
-    height: '22%',
+    height: 120,
     width: '100%',
+    marginBottom: 10,
   },
   booksContainer: {
     flexDirection: 'row',

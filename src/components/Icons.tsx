@@ -1,46 +1,50 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 
+interface IconProps {
+  color?: string;
+}
+
 // Bookshelf Icon
-export const BookshelfIcon: React.FC = () => (
+export const BookshelfIcon: React.FC<IconProps> = ({ color = '#5D4037' }) => (
   <View style={styles.iconContainer}>
-    <View style={styles.bookshelfIconShelf} />
-    <View style={[styles.bookshelfIconBook, { left: 3, height: 14 }]} />
-    <View style={[styles.bookshelfIconBook, { left: 10, height: 12 }]} />
-    <View style={[styles.bookshelfIconBook, { left: 17, height: 16 }]} />
+    <View style={[styles.bookshelfIconShelf, { backgroundColor: color }]} />
+    <View style={[styles.bookshelfIconBook, { left: 3, height: 14, backgroundColor: color }]} />
+    <View style={[styles.bookshelfIconBook, { left: 10, height: 12, backgroundColor: color }]} />
+    <View style={[styles.bookshelfIconBook, { left: 17, height: 16, backgroundColor: color }]} />
   </View>
 );
 
 // Open Book Icon
-export const OpenBookIcon: React.FC = () => (
+export const OpenBookIcon: React.FC<IconProps> = ({ color = '#5D4037' }) => (
   <View style={styles.iconContainer}>
-    <View style={styles.openBookLeftPage} />
-    <View style={styles.openBookRightPage} />
-    <View style={styles.openBookSpine} />
+    <View style={[styles.openBookLeftPage, { borderColor: color }]} />
+    <View style={[styles.openBookRightPage, { borderColor: color }]} />
+    <View style={[styles.openBookSpine, { backgroundColor: color }]} />
   </View>
 );
 
 // Bookmark Icon
-export const BookmarkIcon: React.FC = () => (
+export const BookmarkIcon: React.FC<IconProps> = ({ color = '#5D4037' }) => (
   <View style={styles.iconContainer}>
-    <View style={styles.bookmarkOuter} />
-    <View style={styles.bookmarkInner} />
+    <View style={[styles.bookmarkOuter, { borderColor: color }]} />
+    <View style={[styles.bookmarkInner, { borderColor: color }]} />
   </View>
 );
 
 // Plus Icon
-export const PlusIcon: React.FC = () => (
+export const PlusIcon: React.FC<IconProps> = ({ color = '#5D4037' }) => (
   <View style={styles.plusIconContainer}>
-    <View style={styles.plusHorizontal} />
-    <View style={styles.plusVertical} />
+    <View style={[styles.plusHorizontal, { backgroundColor: color }]} />
+    <View style={[styles.plusVertical, { backgroundColor: color }]} />
   </View>
 );
 
 // Profile Icon
-export const ProfileIcon: React.FC = () => (
+export const ProfileIcon: React.FC<IconProps> = ({ color = '#5D4037' }) => (
   <View style={styles.profileIconContainer}>
-    <View style={styles.profileHead} />
-    <View style={styles.profileBody} />
+    <View style={[styles.profileHead, { backgroundColor: color }]} />
+    <View style={[styles.profileBody, { backgroundColor: color }]} />
   </View>
 );
 
@@ -153,13 +157,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 2,
     borderBottomRightRadius: 2,
     right: 7,
-  },
-  openBookSpine: {
-    position: 'absolute',
-    width: 2,
-    height: 18,
-    backgroundColor: '#5D4037',
-    alignSelf: 'center',
   },
   // Bookmark icon
   bookmarkOuter: {
