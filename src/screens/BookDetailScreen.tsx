@@ -1,14 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, StatusBar, ScrollView } from 'react-native';
 import { BOOKSHELF_COLORS } from '../utils/colors';
 import BottomNavigation from '../components/BottomNavigation';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
+import { getBooks } from '../services/BookStorage';
+import { Book } from '../models/Book';
 
 type BookDetailScreenProps = NativeStackScreenProps<RootStackParamList, 'BookDetail'>;
 
 const BookDetailScreen = ({ route, navigation }: BookDetailScreenProps) => {
   const { bookColor } = route.params;
+  const [book, setBook] = useState<Book | null>(null);
+
+  useEffect(() => {
+    const loadBook = async () => {
+      const books = await getBooks();
+      const foundBook = books.find(b => b.color === bookColor);
+      if (foundBook) {
+        setBook(foundBook);
+      }
+    };
+    
+    loadBook();
+  }, [bookColor]);
 
   const handleNavigateToHome = () => {
     navigation.navigate('Home');
@@ -35,7 +50,7 @@ const BookDetailScreen = ({ route, navigation }: BookDetailScreenProps) => {
       {/* Header with back button and bookmark */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={handleNavigateToHome}>
-          <Text style={styles.backIcon}>←</Text>
+          <Text style={styles.backIcon}>‹</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.bookmarkButton}>
           <View style={styles.bookmarkIcon} />
@@ -44,8 +59,8 @@ const BookDetailScreen = ({ route, navigation }: BookDetailScreenProps) => {
       
       {/* Book details */}
       <View style={styles.bookInfoContainer}>
-        <Text style={styles.bookTitle}>Alice nel pase delle meraviglie</Text>
-        <Text style={styles.bookAuthor}>Lewis C. Carrol</Text>
+        <Text style={styles.bookTitle}>{book?.title || "Loading book..."}</Text>
+        <Text style={styles.bookAuthor}>{book?.author || ""}</Text>
       </View>
       
       {/* Book content */}
@@ -97,8 +112,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   backIcon: {
-    fontSize: 24,
+    fontSize: 32,
     color: '#5D4037',
+    marginTop: -4,
   },
   bookmarkButton: {
     width: 32,

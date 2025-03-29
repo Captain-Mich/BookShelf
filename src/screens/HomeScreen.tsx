@@ -1,67 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, StatusBar, Modal, ScrollView } from 'react-native';
-import { BOOKSHELF_COLORS, BOOK_COLORS } from '../utils/colors';
+import { BOOKSHELF_COLORS } from '../utils/colors';
 import Bookshelf from '../components/Bookshelf';
 import BottomNavigation from '../components/BottomNavigation';
 import { PlusIcon, ProfileIcon } from '../components/Icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
+import { getBooks } from '../services/BookStorage';
+import { Book } from '../models/Book';
 
 type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 const HomeScreen = ({ navigation }: HomeScreenProps) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const [books, setBooks] = useState<Book[]>([]);
+  
+  // Load books when component mounts
+  useEffect(() => {
+    const loadBooks = async () => {
+      const storedBooks = await getBooks();
+      setBooks(storedBooks);
+    };
+    
+    loadBooks();
+    
+    // Also reload books when the screen comes into focus (returning from add book)
+    const unsubscribe = navigation.addListener('focus', loadBooks);
+    return unsubscribe;
+  }, [navigation]);
 
-  // Create mostly gray books with a few colored ones as examples
-  const grayColor = '#D7CCC8'; // Gray book color
-  
-  // Book colors for each shelf
-  const shelf1Books = [
-    BOOK_COLORS[0], BOOK_COLORS[1], grayColor, 
-    grayColor, grayColor, grayColor, 
-    grayColor, grayColor, grayColor
-  ];
-  
-  const shelf2Books = [
-    grayColor, grayColor, grayColor, 
-    grayColor, grayColor, BOOK_COLORS[3], 
-    grayColor, grayColor, grayColor
-  ];
-  
-  const shelf3Books = [
-    grayColor, grayColor, grayColor, 
-    grayColor, grayColor, grayColor, 
-    grayColor, grayColor, grayColor
-  ];
-  
-  const shelf4Books = [
-    grayColor, grayColor, grayColor, 
-    grayColor, grayColor, grayColor, 
-    grayColor, grayColor, grayColor
-  ];
-  
-  const shelf5Books = [
-    grayColor, BOOK_COLORS[4], grayColor, 
-    grayColor, grayColor, grayColor, 
-    grayColor, grayColor, grayColor
-  ];
-  
-  const shelf6Books = [
-    grayColor, grayColor, grayColor, 
-    grayColor, grayColor, grayColor, 
-    BOOK_COLORS[5], grayColor, grayColor
-  ];
-
-  const handlePressBook = (bookColor: string) => {
-    navigation.navigate('BookDetail', { bookColor });
+  const handlePressBook = (book: Book) => {
+    navigation.navigate('BookDetail', { bookColor: book.color });
   };
 
   const handleNavigateToReading = () => {
-    navigation.navigate('Reading', { bookColor: BOOK_COLORS[0] });
+    if (books.length > 0) {
+      navigation.navigate('Reading', { bookColor: books[0].color });
+    } else {
+      navigation.navigate('Reading', { bookColor: BOOKSHELF_COLORS.shelf });
+    }
   };
 
   const handleNavigateToQuotes = () => {
     navigation.navigate('Quotes');
+  };
+  
+  const handleAddBook = () => {
+    setModalVisible(false);
+    navigation.navigate('AddBook');
+  };
+
+  // Group books into shelves for display
+  const getBooksForShelf = (shelfIndex: number, booksPerShelf: number = 9): Book[] => {
+    const startIndex = shelfIndex * booksPerShelf;
+    const endIndex = startIndex + booksPerShelf;
+    return books.slice(startIndex, endIndex);
   };
 
   return (
@@ -91,12 +84,12 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <Bookshelf bookColors={shelf1Books} onPressBook={handlePressBook} />
-        <Bookshelf bookColors={shelf2Books} onPressBook={handlePressBook} />
-        <Bookshelf bookColors={shelf3Books} onPressBook={handlePressBook} />
-        <Bookshelf bookColors={shelf4Books} onPressBook={handlePressBook} />
-        <Bookshelf bookColors={shelf5Books} onPressBook={handlePressBook} />
-        <Bookshelf bookColors={shelf6Books} onPressBook={handlePressBook} />
+        <Bookshelf books={getBooksForShelf(0)} onPressBook={handlePressBook} />
+        <Bookshelf books={getBooksForShelf(1)} onPressBook={handlePressBook} />
+        <Bookshelf books={getBooksForShelf(2)} onPressBook={handlePressBook} />
+        <Bookshelf books={getBooksForShelf(3)} onPressBook={handlePressBook} />
+        <Bookshelf books={getBooksForShelf(4)} onPressBook={handlePressBook} />
+        <Bookshelf books={getBooksForShelf(5)} onPressBook={handlePressBook} />
       </ScrollView>
       
       {/* Bottom Navigation */}
@@ -129,7 +122,10 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
             
             <Text style={styles.orText}>OR</Text>
             
-            <TouchableOpacity style={styles.modalButton}>
+            <TouchableOpacity 
+              style={styles.modalButton}
+              onPress={handleAddBook}
+            >
               <View style={styles.bookIcon} />
               <Text style={styles.modalButtonText}>Add Book</Text>
             </TouchableOpacity>

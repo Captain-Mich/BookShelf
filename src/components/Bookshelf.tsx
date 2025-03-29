@@ -2,25 +2,48 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import Book from './Book';
 import { BOOKSHELF_COLORS } from '../utils/colors';
+import { Book as BookModel } from '../models/Book';
 
 interface BookshelfProps {
-  bookColors: string[];
-  onPressBook: (bookColor: string) => void;
+  books: BookModel[];
+  onPressBook: (book: BookModel) => void;
+  defaultBookCount?: number;
 }
 
-const Bookshelf: React.FC<BookshelfProps> = ({ bookColors, onPressBook }) => {
+const Bookshelf: React.FC<BookshelfProps> = ({ 
+  books = [], 
+  onPressBook,
+  defaultBookCount = 9 
+}) => {
   // Determine if one book should be slanted
-  const slantedIndex = bookColors.length > 6 ? Math.floor(Math.random() * bookColors.length) : -1;
+  const slantedIndex = books.length > 0 ? Math.floor(Math.random() * books.length) : -1;
+  
+  // Create an array with the correct number of books
+  const displayBooks = [...books];
+  const grayColor = '#D7CCC8'; // Gray book color
+  
+  // Add gray books if we have fewer than the default count
+  while (displayBooks.length < defaultBookCount) {
+    displayBooks.push({
+      id: `empty-${displayBooks.length}`,
+      title: '',
+      author: '',
+      color: grayColor,
+      progress: 0,
+      addedDate: '',
+    });
+  }
   
   return (
     <View style={styles.shelfContainer}>
       <View style={styles.booksContainer}>
-        {bookColors.map((color: string, index: number) => (
+        {displayBooks.map((book, index) => (
           <Book 
-            key={index} 
-            color={color} 
-            isSlanted={index === slantedIndex}
-            onPress={() => onPressBook(color)}
+            key={book.id} 
+            color={book.color} 
+            title={book.title}
+            isSlanted={index === slantedIndex && book.title !== ''}
+            onPress={() => book.title ? onPressBook(book) : null}
           />
         ))}
       </View>

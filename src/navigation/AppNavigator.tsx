@@ -6,6 +6,7 @@ import HomeScreen from '../screens/HomeScreen';
 import ReadingScreen from '../screens/ReadingScreen';
 import QuotesScreen from '../screens/QuotesScreen';
 import BookDetailScreen from '../screens/BookDetailScreen';
+import AddBookScreen from '../screens/AddBookScreen';
 
 // Define the stack navigator param list types
 export type RootStackParamList = {
@@ -13,6 +14,7 @@ export type RootStackParamList = {
   Reading: { bookColor: string };
   Quotes: undefined;
   BookDetail: { bookColor: string };
+  AddBook: undefined;
 };
 
 // Create the stack navigator
@@ -47,6 +49,11 @@ const AppNavigator = () => {
           name="BookDetail" 
           options={{ headerShown: false }}
           component={BookDetailScreen} 
+        />
+        <Stack.Screen 
+          name="AddBook" 
+          options={{ headerShown: false }}
+          component={AddBookScreen} 
         />
       </Stack.Navigator>
     </NavigationContainer>
