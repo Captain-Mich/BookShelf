@@ -120,3 +120,13 @@ apply from: file("../../node_modules/@react-native-community/cli-platform-androi
 
 // Add this line for vector icons
 apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle")
+
+// Fix Vector Icons lint dependency issue
+afterEvaluate {
+    tasks.named("lintAnalyzeDebug") {
+        dependsOn(tasks.named("copyReactNativeVectorIconFonts"))
+    }
+    tasks.named("lintAnalyzeRelease") {
+        dependsOn(tasks.named("copyReactNativeVectorIconFonts"))
+    }
+}

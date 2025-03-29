@@ -8,20 +8,23 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { getBooks } from '../services/BookStorage';
 import { Book } from '../models/Book';
+import BottomMenu from '../components/BottomMenu';
+import QuoteModal from '../components/QuoteModal';
 
 type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 const HomeScreen = ({ navigation }: HomeScreenProps) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const [quoteModalVisible, setQuoteModalVisible] = useState(false);
   const [books, setBooks] = useState<Book[]>([]);
   
   // Load books when component mounts
+  const loadBooks = async () => {
+    const storedBooks = await getBooks();
+    setBooks(storedBooks);
+  };
+
   useEffect(() => {
-    const loadBooks = async () => {
-      const storedBooks = await getBooks();
-      setBooks(storedBooks);
-    };
-    
     loadBooks();
     
     // Also reload books when the screen comes into focus (returning from add book)
@@ -49,9 +52,14 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
     setModalVisible(false);
     navigation.navigate('AddBook');
   };
+  
+  const handleAddQuote = () => {
+    setModalVisible(false);
+    setQuoteModalVisible(true);
+  };
 
   // Group books into shelves for display
-  const getBooksForShelf = (shelfIndex: number, booksPerShelf: number = 9): Book[] => {
+  const getBooksForShelf = (shelfIndex: number, booksPerShelf: number = 6): Book[] => {
     const startIndex = shelfIndex * booksPerShelf;
     const endIndex = startIndex + booksPerShelf;
     return books.slice(startIndex, endIndex);
@@ -88,16 +96,10 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
         <Bookshelf books={getBooksForShelf(1)} onPressBook={handlePressBook} />
         <Bookshelf books={getBooksForShelf(2)} onPressBook={handlePressBook} />
         <Bookshelf books={getBooksForShelf(3)} onPressBook={handlePressBook} />
-        <Bookshelf books={getBooksForShelf(4)} onPressBook={handlePressBook} />
-        <Bookshelf books={getBooksForShelf(5)} onPressBook={handlePressBook} />
       </ScrollView>
       
       {/* Bottom Navigation */}
-      <BottomNavigation 
-        active="bookshelf"
-        onPressReading={handleNavigateToReading}
-        onPressBookmarks={handleNavigateToQuotes}
-      />
+      <BottomMenu activeTab="bookshelf" />
 
       {/* Modal for Add Quote or Add Book */}
       <Modal
@@ -115,7 +117,10 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
               <Text style={styles.closeButtonText}>✕</Text>
             </TouchableOpacity>
             
-            <TouchableOpacity style={styles.modalButton}>
+            <TouchableOpacity 
+              style={styles.modalButton}
+              onPress={handleAddQuote}
+            >
               <View style={styles.bookmarkIcon} />
               <Text style={styles.modalButtonText}>Add Quote</Text>
             </TouchableOpacity>
@@ -132,6 +137,16 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
           </View>
         </View>
       </Modal>
+      
+      {/* Quote Modal */}
+      <QuoteModal 
+        visible={quoteModalVisible}
+        onClose={() => setQuoteModalVisible(false)}
+        onAddQuote={() => {
+          setQuoteModalVisible(false);
+          loadBooks();
+        }}
+      />
     </SafeAreaView>
   );
 };

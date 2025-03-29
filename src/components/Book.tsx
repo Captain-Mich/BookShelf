@@ -3,18 +3,36 @@ import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 
 interface BookProps {
   color: string;
-  isSlanted?: boolean;
   title?: string;
   onPress?: () => void;
+  pages?: number;
 }
 
-const Book: React.FC<BookProps> = ({ color, isSlanted = false, title = '', onPress }) => {
-  const slantStyle = isSlanted ? { transform: [{ rotate: '15deg' }], marginTop: -10 } : {};
+const Book: React.FC<BookProps> = ({ 
+  color, 
+  title = '', 
+  onPress,
+  pages = 200 // Default page count
+}) => {
+  // Calculate width based on pages (with min and max limits)
+  const width = calculateWidth(pages);
+  
+  // Randomize height slightly for visual interest
+  const heightVariation = Math.random() * 10 - 5; // -5 to +5 variation (reduced range)
+  const height = 90 + heightVariation;
+  
   const shortTitle = title ? shortenTitle(title) : '';
   
   return (
     <TouchableOpacity 
-      style={[styles.book, { backgroundColor: color }, slantStyle]} 
+      style={[
+        styles.book, 
+        { 
+          backgroundColor: color,
+          width,
+          height: `${height}%`,
+        }
+      ]} 
       onPress={onPress}
       activeOpacity={0.7}
     >
@@ -35,9 +53,21 @@ const shortenTitle = (title: string): string => {
   return title.substring(0, 11) + '…';
 };
 
+// Calculate book width based on page count
+const calculateWidth = (pages: number): number => {
+  // Base width calculations on page count
+  const minWidth = 20;  // Minimum width for very thin books
+  const maxWidth = 45;  // Maximum width for very thick books
+  
+  if (!pages || pages < 100) return minWidth;
+  if (pages > 1000) return maxWidth;
+  
+  // Linear scale between minWidth and maxWidth
+  return minWidth + (pages - 100) * (maxWidth - minWidth) / 900;
+};
+
 const styles = StyleSheet.create({
   book: {
-    flex: 1,
     height: '90%',
     marginHorizontal: 1,
     borderRadius: 3,

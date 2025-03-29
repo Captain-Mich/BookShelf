@@ -1,60 +1,68 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
-import { BOOKSHELF_COLORS } from '../utils/colors';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../navigation/AppNavigator';
 
-interface BottomNavigationProps {
-  active?: 'bookshelf' | 'reading' | 'bookmarks';
-  onPressBookshelf?: () => void;
-  onPressReading?: () => void;
-  onPressBookmarks?: () => void;
+type BottomMenuNavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
+interface BottomMenuProps {
+  activeTab: 'bookshelf' | 'reading' | 'quotes';
 }
 
-const BottomNavigation: React.FC<BottomNavigationProps> = ({
-  active = 'bookshelf',
-  onPressBookshelf,
-  onPressReading,
-  onPressBookmarks,
-}) => {
-  const activeOpacity = 0.7;
-  
+const BottomMenu: React.FC<BottomMenuProps> = ({ activeTab }) => {
+  const navigation = useNavigation<BottomMenuNavigationProp>();
+
+  const navigateToHome = () => {
+    navigation.navigate('Home');
+  };
+
+  const navigateToReading = () => {
+    navigation.navigate('Reading', { bookColor: '' });
+  };
+
+  const navigateToQuotes = () => {
+    navigation.navigate('Quotes');
+  };
+
   return (
     <View style={styles.container}>
       <TouchableOpacity
-        style={[styles.navItem, active === 'bookshelf' && styles.activeNavItem]}
-        onPress={onPressBookshelf}
-        activeOpacity={activeOpacity}
+        style={[styles.navItem, activeTab === 'bookshelf' && styles.activeNavItem]}
+        onPress={navigateToHome}
+        activeOpacity={0.7}
       >
         <View style={styles.navIcon}>
           <View style={styles.bookshelfIcon} />
         </View>
-        <Text style={[styles.navText, active === 'bookshelf' && styles.activeNavText]}>
+        <Text style={[styles.navText, activeTab === 'bookshelf' && styles.activeNavText]}>
           Bookshelf
         </Text>
       </TouchableOpacity>
       
       <TouchableOpacity
-        style={[styles.navItem, active === 'reading' && styles.activeNavItem]}
-        onPress={onPressReading}
-        activeOpacity={activeOpacity}
-      >
-        <View style={styles.navIcon}>
-          <View style={styles.readingIcon} />
-        </View>
-        <Text style={[styles.navText, active === 'reading' && styles.activeNavText]}>
-          Reading
-        </Text>
-      </TouchableOpacity>
-      
-      <TouchableOpacity
-        style={[styles.navItem, active === 'bookmarks' && styles.activeNavItem]}
-        onPress={onPressBookmarks}
-        activeOpacity={activeOpacity}
+        style={[styles.navItem, activeTab === 'quotes' && styles.activeNavItem]}
+        onPress={navigateToQuotes}
+        activeOpacity={0.7}
       >
         <View style={styles.navIcon}>
           <View style={styles.bookmarkIcon} />
         </View>
-        <Text style={[styles.navText, active === 'bookmarks' && styles.activeNavText]}>
+        <Text style={[styles.navText, activeTab === 'quotes' && styles.activeNavText]}>
           Quotes
+        </Text>
+      </TouchableOpacity>
+      
+      <TouchableOpacity
+        style={[styles.navItem, activeTab === 'reading' && styles.activeNavItem]}
+        onPress={navigateToReading}
+        activeOpacity={0.7}
+      >
+        <View style={styles.navIcon}>
+          <View style={styles.readingIcon} />
+        </View>
+        <Text style={[styles.navText, activeTab === 'reading' && styles.activeNavText]}>
+          Reading
         </Text>
       </TouchableOpacity>
     </View>
@@ -131,4 +139,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BottomNavigation; 
+export default BottomMenu; 

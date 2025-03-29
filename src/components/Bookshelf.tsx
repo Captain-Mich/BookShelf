@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import Book from './Book';
-import { BOOKSHELF_COLORS } from '../utils/colors';
+import { BOOKSHELF_COLORS, BOOK_COLORS } from '../utils/colors';
 import { Book as BookModel } from '../models/Book';
 
 interface BookshelfProps {
@@ -13,16 +13,13 @@ interface BookshelfProps {
 const Bookshelf: React.FC<BookshelfProps> = ({ 
   books = [], 
   onPressBook,
-  defaultBookCount = 9 
+  defaultBookCount = 12  // Increased to fill the shelf horizontally
 }) => {
-  // Determine if one book should be slanted
-  const slantedIndex = books.length > 0 ? Math.floor(Math.random() * books.length) : -1;
-  
   // Create an array with the correct number of books
   const displayBooks = [...books];
-  const grayColor = '#D7CCC8'; // Gray book color
+  const grayColor = '#D7CCC8'; // Gray book color  const brownColor = '#8D6E63'; // Brown color for empty books
   
-  // Add gray books if we have fewer than the default count
+  // Add placeholder books if we have fewer than the default count
   while (displayBooks.length < defaultBookCount) {
     displayBooks.push({
       id: `empty-${displayBooks.length}`,
@@ -31,18 +28,20 @@ const Bookshelf: React.FC<BookshelfProps> = ({
       color: grayColor,
       progress: 0,
       addedDate: '',
+      pages: 100, // Default minimum page count for empty books
+      quotes: [],
     });
   }
   
   return (
     <View style={styles.shelfContainer}>
       <View style={styles.booksContainer}>
-        {displayBooks.map((book, index) => (
+        {displayBooks.map((book) => (
           <Book 
             key={book.id} 
             color={book.color} 
             title={book.title}
-            isSlanted={index === slantedIndex && book.title !== ''}
+            pages={book.pages}
             onPress={() => book.title ? onPressBook(book) : null}
           />
         ))}
@@ -54,9 +53,9 @@ const Bookshelf: React.FC<BookshelfProps> = ({
 
 const styles = StyleSheet.create({
   shelfContainer: {
-    height: 120,
+    height: 150, // Increased from 120 to accommodate taller books
     width: '100%',
-    marginBottom: 10,
+    marginBottom: 15, // Increased from 10 for better spacing
   },
   booksContainer: {
     flexDirection: 'row',

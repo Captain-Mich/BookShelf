@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Book } from '../models/Book';
+import { Book, Quote } from '../models/Book';
 import { BOOK_COLORS } from '../utils/colors';
 
 const BOOKS_STORAGE_KEY = '@BookShelf:books';
@@ -23,7 +23,7 @@ export const getBooks = async (): Promise<Book[]> => {
   }
 };
 
-export const addBook = async (title: string, author: string): Promise<Book | null> => {
+export const addBook = async (title: string, author: string, pages: number): Promise<Book | null> => {
   try {
     const books = await getBooks();
     const newBook: Book = {
@@ -33,6 +33,8 @@ export const addBook = async (title: string, author: string): Promise<Book | nul
       color: getNextBookColor(books),
       progress: 0,
       addedDate: new Date().toISOString(),
+      pages,
+      quotes: [],
     };
     
     await saveBooks([...books, newBook]);
@@ -54,6 +56,38 @@ export const updateBookProgress = async (bookId: string, progress: number): Prom
     await saveBooks(updatedBooks);
   } catch (error) {
     console.error('Error updating book progress:', error);
+  }
+};
+
+export const addQuoteToBook = async (bookId: string, quoteText: string, page?: number): Promise<Quote | null> => {
+  try {
+    const books = await getBooks();
+    const bookIndex = books.findIndex(book => book.id === bookId);
+    
+    if (bookIndex === -1) {
+      return null;
+    }
+    
+    const newQuote: Quote = {
+      id: Date.now().toString(),
+      text: quoteText,
+      page,
+      createdAt: new Date().toISOString(),
+    };
+    
+    const updatedBook = { 
+      ...books[bookIndex],
+      quotes: [...books[bookIndex].quotes, newQuote]
+    };
+    
+    const updatedBooks = [...books];
+    updatedBooks[bookIndex] = updatedBook;
+    
+    await saveBooks(updatedBooks);
+    return newQuote;
+  } catch (error) {
+    console.error('Error adding quote to book:', error);
+    return null;
   }
 };
 

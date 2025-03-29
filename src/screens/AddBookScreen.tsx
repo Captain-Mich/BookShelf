@@ -21,6 +21,7 @@ type AddBookScreenProps = NativeStackScreenProps<RootStackParamList, 'AddBook'>;
 const AddBookScreen = ({ navigation }: AddBookScreenProps) => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
+  const [pages, setPages] = useState('');
 
   const handleGoBack = () => {
     navigation.goBack();
@@ -37,7 +38,13 @@ const AddBookScreen = ({ navigation }: AddBookScreenProps) => {
       return;
     }
     
-    const newBook = await addBook(title, author);
+    const pagesNum = parseInt(pages);
+    if (isNaN(pagesNum) || pagesNum <= 0) {
+      Alert.alert('Error', 'Please enter a valid number of pages');
+      return;
+    }
+    
+    const newBook = await addBook(title, author, pagesNum);
     if (newBook) {
       navigation.navigate('Home');
     }
@@ -82,6 +89,18 @@ const AddBookScreen = ({ navigation }: AddBookScreenProps) => {
             onChangeText={setAuthor}
             placeholder="Enter author name"
             placeholderTextColor="#A1887F"
+          />
+        </View>
+        
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Number of Pages</Text>
+          <TextInput
+            style={styles.input}
+            value={pages}
+            onChangeText={setPages}
+            placeholder="Enter number of pages"
+            placeholderTextColor="#A1887F"
+            keyboardType="numeric"
           />
         </View>
         
